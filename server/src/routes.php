@@ -189,6 +189,14 @@ Route::prefix(config('fleetops.api.routing.prefix', null))->namespace('Fleetbase
                 $router->group(['prefix' => 'onboard'], function () use ($router) {
                     $router->get('driver-onboard-settings/{companyId}', 'NavigatorController@getDriverOnboardSettings');
                 });
+                // compartments routes
+                $router->group(['prefix' => 'compartments'], function () use ($router) {
+                    $router->post('/', 'CompartmentController@create');
+                    $router->get('/', 'CompartmentController@query');
+                    $router->get('{id}', 'CompartmentController@find');
+                    $router->put('{id}', 'CompartmentController@update');
+                    $router->delete('{id}', 'CompartmentController@delete');
+                });
             });
 
         /*
@@ -433,6 +441,16 @@ Route::prefix(config('fleetops.api.routing.prefix', null))->namespace('Fleetbase
                                 $router->get('customers/{id}', $controller('getAsCustomer'));
                                 $router->post('{id}/assign-driver', $controller('assignDriver'));
                                 $router->post('{id}/remove-driver', $controller('removeDriver'));
+                                $router->delete('bulk-delete', $controller('bulkDelete'));
+                                $router->post('import', $controller('import'))->middleware([Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class]);
+                            }
+                        );
+                        $router->fleetbaseRoutes(
+                            'compartments',
+                            function ($router, $controller) {
+                                $router->get('statuses', $controller('statuses'))->middleware([Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class]);
+                                $router->get('avatars', $controller('avatars'))->middleware([Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class]);
+                                $router->match(['get', 'post'], 'export', $controller('export'))->middleware([Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class]);
                                 $router->delete('bulk-delete', $controller('bulkDelete'));
                                 $router->post('import', $controller('import'))->middleware([Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class]);
                             }
