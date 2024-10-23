@@ -57,7 +57,7 @@ class Payload extends Model
      *
      * @var array
      */
-    protected $fillable = ['_key', 'company_uuid', 'pickup_uuid', 'dropoff_uuid', 'return_uuid', 'current_waypoint_uuid', 'meta', 'payment_method', 'cod_amount', 'cod_currency', 'cod_payment_method', 'type'];
+    protected $fillable = ['_key', 'company_uuid', 'pickup_uuid', 'dropoff_uuid', 'return_uuid', 'current_waypoint_uuid', 'meta', 'payment_method', 'cod_amount', 'cod_currency', 'cod_payment_method', 'type', 'compartment_uuid'];
 
     /**
      * The attributes that should be cast to native types.
@@ -66,6 +66,7 @@ class Payload extends Model
      */
     protected $casts = [
         'meta' => Json::class,
+        'compartment_uuid' => 'string',
     ];
 
     /**
@@ -890,5 +891,10 @@ class Payload extends Model
         }
 
         return null;
+    }
+
+    public function compartments()
+    {
+        return $this->hasMany(Compartment::class, 'payload_uuid');
     }
 }

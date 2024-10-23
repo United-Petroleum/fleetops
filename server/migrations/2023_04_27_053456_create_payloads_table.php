@@ -32,6 +32,7 @@ return new class() extends Migration {
             $table->softDeletes();
             $table->timestamp('created_at')->nullable()->index();
             $table->timestamp('updated_at')->nullable();
+            $table->uuid('compartment_uuid')->nullable()->index();
 
             $table->unique(['public_id']);
             $table->unique(['uuid']);

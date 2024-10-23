@@ -76,6 +76,7 @@ class Compartment extends Model
     protected $fillable = [
         '_key',
         'public_id',
+        'payload_uuid',
         'internal_id',
         'company_uuid',
         'vehicle_uuid',
@@ -85,13 +86,9 @@ class Compartment extends Model
         'signup_token_used',
         'avatar_url',
         'compartment_number',
-        'capacity',
+        'capacity_gal',
+        'filled_capacity_gal',
         'acceptable_fuels',
-        'location',
-        'heading',
-        'bearing',
-        'altitude',
-        'speed',
         'country',
         'currency',
         'city',
@@ -100,6 +97,7 @@ class Compartment extends Model
         'slug',
         'status',
         'meta',
+        'order_uuid',
     ];
 
     /**
@@ -114,7 +112,7 @@ class Compartment extends Model
      *
      * @var array
      */
-    protected $spatialFields = ['location'];
+    protected $spatialFields = [];
 
     /**
      * The attributes that should be cast to native types.
@@ -122,9 +120,12 @@ class Compartment extends Model
      * @var array
      */
     protected $casts = [
-        'location'           => Point::class,
         'online'             => 'boolean',
         'meta'               => Json::class,
+        'capacity_gal'       => 'float',
+        'filled_capacity_gal' => 'float',
+        'order_uuid'         => 'string',
+        'payload_uuid'       => 'string',
     ];
 
     /**
@@ -478,5 +479,54 @@ class Compartment extends Model
                     ->orWhere('compartment_number', $identifier);
             })
             ->first();
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_uuid');
+    }
+
+    public function payload()
+    {
+        return $this->belongsTo(Payload::class, 'payload_uuid');
+    }
+
+    /**
+     * Assigns the compartment to an order and its payload.
+     *
+     * @param Order $order
+     * @return $this
+     */
+    public function assignToOrder(Order $order)
+    {
+        $this->order_uuid = $order->uuid;
+        $this->payload_uuid = $order->payload_uuid;
+        $this->save();
+
+        return $this;
+    }
+
+    /**
+     * Unassigns the compartment from its current order and payload.
+     *
+     * @return $this
+     */
+    public function unassignFromOrder()
+    {
+        $this->order_uuid = null;
+        $this->payload_uuid = null;
+        $this->save();
+
+        return $this;
+    }
+
+    /**
+     * Check if the compartment is assigned to an order.
+     *
+     * @return bool
+     */
+    public function isAssignedToOrder()
+    {
+        return !is_null($this->order_uuid);
     }
 }

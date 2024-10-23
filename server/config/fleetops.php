@@ -150,6 +150,12 @@ return [
         'vendor.updated',
         'vendor.deleted',
 
+        // compartment events
+        'compartment.created',
+        'compartment.updated',
+        'compartment.deleted',
+        'compartment.assigned',
+
         // zone events
         'zone.created',
         'zone.updated',

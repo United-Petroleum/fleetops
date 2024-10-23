@@ -16,18 +16,21 @@ return new class extends Migration
             // Ensure vehicle_uuid is nullable
             $table->uuid('vehicle_uuid')->nullable()->change();
 
-            // Check and add foreign key constraints if they don't exist
-            $this->addForeignKeyIfNotExists($table, 'company_uuid', 'companies', 'uuid', 'CASCADE', 'CASCADE');
-            $this->addForeignKeyIfNotExists($table, 'vehicle_uuid', 'vehicles', 'uuid', 'SET NULL', 'CASCADE');
-            $this->addForeignKeyIfNotExists($table, 'vendor_uuid', 'vendors', 'uuid', 'SET NULL', 'CASCADE');
-            $this->addForeignKeyIfNotExists($table, 'current_job_uuid', 'orders', 'uuid', 'SET NULL', 'CASCADE');
-
             // Check if the unique constraint exists before trying to drop it
             $sm = Schema::getConnection()->getDoctrineSchemaManager();
             $indexesFound = $sm->listTableIndexes('compartments');
             if (array_key_exists('compartments_vehicle_uuid_unique', $indexesFound)) {
                 $table->dropUnique(['vehicle_uuid']);
             }
+
+            // Check and add foreign key constraints if they don't exist
+            $this->addForeignKeyIfNotExists($table, 'company_uuid', 'companies', 'uuid', 'CASCADE', 'CASCADE');
+            $this->addForeignKeyIfNotExists($table, 'vehicle_uuid', 'vehicles', 'uuid', 'SET NULL', 'CASCADE');
+            $this->addForeignKeyIfNotExists($table, 'vendor_uuid', 'vendors', 'uuid', 'SET NULL', 'CASCADE');
+            $this->addForeignKeyIfNotExists($table, 'order_uuid', 'orders', 'uuid', 'SET NULL', 'CASCADE');
+            $this->addForeignKeyIfNotExists($table, 'payload_uuid', 'payloads', 'uuid', 'SET NULL', 'CASCADE');
+
+            $table->unique(['compartment_number', 'company_uuid']);
         });
     }
 
@@ -41,7 +44,8 @@ return new class extends Migration
             $this->dropForeignKeyIfExists($table, 'compartments_company_uuid_foreign');
             $this->dropForeignKeyIfExists($table, 'compartments_vehicle_uuid_foreign');
             $this->dropForeignKeyIfExists($table, 'compartments_vendor_uuid_foreign');
-            $this->dropForeignKeyIfExists($table, 'compartments_current_job_uuid_foreign');
+            $this->dropForeignKeyIfExists($table, 'compartments_order_uuid_foreign');
+            $this->dropForeignKeyIfExists($table, 'compartments_payload_uuid_foreign');
 
             // If you want to revert vehicle_uuid to non-nullable in down(), uncomment the next line
             // $table->uuid('vehicle_uuid')->nullable(false)->change();
@@ -56,8 +60,10 @@ return new class extends Migration
         $foreignKeys = Schema::getConnection()->getDoctrineSchemaManager()->listTableForeignKeys($table->getTable());
         $foreignKeyName = $table->getTable() . '_' . $column . '_foreign';
 
-        $exists = collect($foreignKeys)->contains(function ($fk) use ($foreignKeyName) {
-            return $fk->getName() === $foreignKeyName;
+        $exists = collect($foreignKeys)->contains(function ($fk) use ($column, $referencedTable, $referencedColumn) {
+            return $fk->getLocalColumns()[0] === $column
+                && $fk->getForeignTableName() === $referencedTable
+                && $fk->getForeignColumns()[0] === $referencedColumn;
         });
 
         if (!$exists) {

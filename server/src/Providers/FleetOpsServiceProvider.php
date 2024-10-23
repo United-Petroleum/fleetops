@@ -37,6 +37,7 @@ class FleetOpsServiceProvider extends CoreServiceProvider
         \Fleetbase\Models\User::class                          => \Fleetbase\FleetOps\Observers\UserObserver::class,
         \Fleetbase\Models\Company::class                       => \Fleetbase\FleetOps\Observers\CompanyObserver::class,
         \Fleetbase\Models\CompanyUser::class                   => \Fleetbase\FleetOps\Observers\CompanyUserObserver::class,
+        \Fleetbase\FleetOps\Models\Compartment::class         => \Fleetbase\FleetOps\Observers\CompartmentObserver::class,
     ];
 
     /**
