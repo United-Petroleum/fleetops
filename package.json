@@ -14,7 +14,7 @@
         "ember-addon",
         "ember-engine"
     ],
-    "repository": "https://github.com/fleetbase/fleetops",
+    "repository": "https://github.com/United-Petroleum/fleetops",
     "license": "AGPL-3.0-or-later",
     "author": "Fleetbase Pte Ltd <hello@fleetbase.io>",
     "directories": {

@@ -206,7 +206,7 @@ class Compartment extends Model
      */
     public function vehicle()
     {
-        return $this->belongsTo(Vehicle::class)->select([
+        return $this->belongsTo(Vehicle::class, 'vehicle_uuid')->select([
             'uuid',
             'vendor_uuid',
             'photo_uuid',
@@ -400,7 +400,6 @@ class Compartment extends Model
      * Assigns the specified vehicle to the current compartment.
      *
      * This method performs the following actions:
-     * 1. Unassigns the vehicle from any other compartments by setting their `vehicle_uuid` to `null`.
      * 2. Assigns the vehicle to the current compartment by updating the vehicle's `compartment_uuid`.
      * 3. Associates the vehicle with the current compartment instance.
      * 4. Saves the changes to persist the assignment.
@@ -413,10 +412,7 @@ class Compartment extends Model
      */
     public function assignVehicle(Vehicle $vehicle): self
     {
-        // Unassign vehicle from other compartments
-        static::where('vehicle_uuid', $vehicle->uuid)->update(['vehicle_uuid' => null]);
-
-        // Set this vehicle to the driver instance
+        // Set this vehicle to the compartment instance
         $this->setVehicle($vehicle);
         $this->save();
 

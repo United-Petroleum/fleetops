@@ -2,7 +2,7 @@
     "name": "Fleet-Ops",
     "version": "0.5.12",
     "description": "Fleet & Transport Management Extension for Fleetbase",
-    "repository": "https://github.com/fleetbase/fleetops",
+    "repository": "https://github.com/United-Petroleum/fleetops",
     "license": "AGPL-3.0-or-later",
     "author": "Fleetbase Pte Ltd <hello@fleetbase.io>",
     "engine": "package.json",

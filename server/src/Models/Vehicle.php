@@ -203,6 +203,14 @@ class Vehicle extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function compartments()
+    {
+        return $this->hasMany(Compartment::class, 'vehicle_uuid');
+    }
+
+    /**
      * Get avatar URL attribute.
      *
      * @return string
