@@ -191,7 +191,8 @@ class Compartment extends Model
     protected static function boot()
     {
         parent::boot();
-        static::addGlobalScope(new CompartmentScope());
+        // Remove the following line:
+        // static::addGlobalScope(new CompartmentScope());
     }
 
     /**
